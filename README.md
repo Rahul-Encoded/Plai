@@ -2,12 +2,12 @@
 
 Low-key letting you vibe check AI models by just coding it. No cap, it hits different. 🚀✍️📊
 
-![image](Assets/a.png)
-![image](Assets/b.png)
-![image](Assets/c.png)
-![image](Assets/d.png)
-![image](Assets/e.png)
-![image](Assets/f.png)
+![image](/public/Assets/a.png)
+![image](/public/Assets/b.png)
+![image](/public/Assets/c.png)
+![image](/public/Assets/d.png)
+![image](/public/Assets/e.png)
+![image](/public/Assets/f.png)
 
 ## What's the Vibe? 🤔
 
