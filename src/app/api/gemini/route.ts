@@ -1,11 +1,10 @@
 import { NextRequest } from "next/server";
-import { GoogleGenAI } from "@google/genai";
+import { createGeminiClient } from "@/lib/geminiClient";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export async function POST(req: NextRequest) {
   const { model, method, query } = await req.json();
-  const ai = new GoogleGenAI({ vertexai: false, apiKey: GEMINI_API_KEY });
+  const ai = createGeminiClient();
 
   try {
     let result;
