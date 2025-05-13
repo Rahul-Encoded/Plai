@@ -27,7 +27,6 @@ interface EditorProps {
 // from node_modules/monaco-editor/esm/vs/base/worker/workerMain.js etc.
 // to your public/monaco-workers directory.
 if (typeof window !== "undefined") {
-  // @ts-expect-error
   self.MonacoEnvironment = {
     getWorkerUrl: function (_moduleId: string, label: string) {
       let workerUrl = "editor.worker.js"; // Default editor worker
