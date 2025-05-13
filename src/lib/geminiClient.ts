@@ -1,8 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { GEMINI_API_KEY } from "./constants";
 
-// Define the ModelInfo type
-type ModelInfo = {
+export interface ModelInfo {
 	name?: string;
 	displayName?: string;
 	supportedActions?: string[];
