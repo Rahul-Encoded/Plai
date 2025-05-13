@@ -2,8 +2,12 @@
 
 Low-key letting you vibe check AI models by just coding it. No cap, it hits different. 🚀✍️📊
 
-![Screenshot Placeholder](https://via.placeholder.com/800x400?text=Screenshot+Goes+Here)
-*(Flex a cool screenshot of your editor and output here!)*
+![image](Assets/a.png)
+![image](Assets/b.png)
+![image](Assets/c.png)
+![image](Assets/d.png)
+![image](Assets/e.png)
+![image](Assets/f.png)
 
 ## What's the Vibe? 🤔
 
@@ -129,7 +133,7 @@ Keep your code clean and try to match the existing vibe. ✨
 ## Shoutouts (Big Thanks To) 🙏
 
 *   [Monaco Editor](https://microsoft.github.io/monaco-editor/) - For the sick editor.
-*   [@google/genai](https://github.com/google/generative-ai-nodejs) - For the easy Node.js client and Wonderful documentation. Check it out at [here](https://github.com/googleapis/js-genai/tree/main)
+*   [@google/genai](https://github.com/google/generative-ai-nodejs) - For the easy Node.js client and Wonderful documentation. Check it out [here](https://github.com/googleapis/js-genai/tree/main)
 *   [Next.js](https://nextjs.org/) - For the App Router goodness.
 *   [Tailwind CSS](https://tailwindcss.com/) - For styling without the struggle.
 *   [next-themes](https://github.com/pacocoursey/next-themes) - For dark mode that slays.
