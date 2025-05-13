@@ -156,9 +156,13 @@ export async function POST(req: NextRequest) {
           typeof error === "object" &&
           error !== null &&
           "response" in error &&
-          (error as any).response?.data;
+          typeof (error as any).response === "object" &&
+          (error as any).response !== null &&
+          "data" in (error as any).response;
         const apiErrorDetails = hasResponse
-          ? ` Details: ${JSON.stringify((error as any).response.data)}`
+          ? ` Details: ${JSON.stringify(
+              (error as { response: { data: unknown } }).response.data
+            )}`
           : "";
         return NextResponse.json(
           {
