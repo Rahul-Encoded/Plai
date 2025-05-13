@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 // Import the specific helper functions from your geminiClient
 import {
-    fetchModelsAndMethods, // Used by GET
-    callGenerateContent,
-    callCountTokens,
-    callEmbedContent,
-    callGenerateImages, // Import the new helper
+  fetchModelsAndMethods, // Used by GET
+  callGenerateContent,
+  callCountTokens,
+  callEmbedContent,
+  callGenerateImages, // Import the new helper
 } from "@/lib/geminiClient";
-
 
 // Helper function to parse the code string (keep as is)
 function parseCodeString(code: string): {
@@ -40,37 +39,49 @@ function parseCodeString(code: string): {
     const [, provider, modelName, methodName, , query] = match;
 
     if (!provider || !modelName || !methodName || query === undefined) {
-         return { error: "Parsing resulted in missing parts." };
+      return { error: "Parsing resulted in missing parts." };
     }
     return { provider, modelName, methodName, query };
   } else {
-    return { error: "Invalid code format. Expected Provider.ModelName.Method(\"Query String\")" };
+    return {
+      error:
+        'Invalid code format. Expected Provider.ModelName.Method("Query String")',
+    };
   }
 }
-
 
 export async function POST(req: NextRequest) {
   const { codeString } = await req.json();
 
   if (!codeString) {
-      return NextResponse.json({ error: "No code string provided" }, { status: 400 });
+    return NextResponse.json(
+      { error: "No code string provided" },
+      { status: 400 }
+    );
   }
 
   const parsed = parseCodeString(codeString);
 
   if (parsed.error) {
-      console.error("Code parsing error:", parsed.error);
-      return NextResponse.json({ error: parsed.error }, { status: 400 });
+    console.error("Code parsing error:", parsed.error);
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
 
   const { provider, modelName, methodName, query } = parsed;
 
   // Basic validation for required parts after parsing
   if (!provider || !modelName || !methodName || query === undefined) {
-      console.error("Parsed code missing required parts:", { provider, modelName, methodName, query });
-       return NextResponse.json({ error: "Internal parsing error: Required parts missing." }, { status: 500 });
+    console.error("Parsed code missing required parts:", {
+      provider,
+      modelName,
+      methodName,
+      query,
+    });
+    return NextResponse.json(
+      { error: "Internal parsing error: Required parts missing." },
+      { status: 500 }
+    );
   }
-
 
   // --- Handle different providers ---
   switch (provider) {
@@ -79,42 +90,47 @@ export async function POST(req: NextRequest) {
       // based on the fetched models, but relying on the API call to fail is also an option.
 
       try {
-        let responseData; 
+        let responseData;
 
         // --- Route to the specific Gemini method helper ---
         switch (methodName) {
           case "generateContent":
             responseData = await callGenerateContent(modelName, query);
-             // The response from the helper is already the text string
+            // The response from the helper is already the text string
             return NextResponse.json({ response: responseData }); // Wrap in 'response' key for consistency
-
 
           case "countTokens":
             responseData = await callCountTokens(modelName, query);
             // The response from the helper is the token count (number)
-            return NextResponse.json({ response: `Token count: ${responseData}` }); // Format as a string
-
+            return NextResponse.json({
+              response: `Token count: ${responseData}`,
+            }); // Format as a string
 
           case "embedContent":
             responseData = await callEmbedContent(modelName, query);
             // The response from the helper is the embedding array (number[])
-             // Stringify the array for displaying in the text output
-            return NextResponse.json({ response: `Embedding: [${responseData.slice(0, 5).join(', ')}... (${responseData.length} values)]` }); // Show first few + count
-
+            // Stringify the array for displaying in the text output
+            return NextResponse.json({
+              response: `Embedding: [${responseData
+                .slice(0, 5)
+                .join(", ")}... (${responseData.length} values)]`,
+            }); // Show first few + count
 
           case "generateImages":
-             // Note: This method requires an Imagen model like 'imagen-3.0-generate-002'
+            // Note: This method requires an Imagen model like 'imagen-3.0-generate-002'
             responseData = await callGenerateImages(modelName, query);
             // The response from the helper is the Base64 image string
-             // In a text output, displaying base64 isn't great.
-             // You might return it as a specific data type for a different frontend component.
-             // For now, indicate success and perhaps return a truncated string.
+            // In a text output, displaying base64 isn't great.
+            // You might return it as a specific data type for a different frontend component.
+            // For now, indicate success and perhaps return a truncated string.
             // return NextResponse.json({ response: `Image generated (Base64): ${responseData.substring(0, 50)}...` });
-             // OR, if you want to try displaying it as an image in the frontend Output (requires Output component changes):
-             // return NextResponse.json({ imageBase64: responseData, type: 'image/png' }); // Or whatever type Imagen returns
+            // OR, if you want to try displaying it as an image in the frontend Output (requires Output component changes):
+            // return NextResponse.json({ imageBase64: responseData, type: 'image/png' }); // Or whatever type Imagen returns
 
-             // Let's just confirm success for now in the text output:
-            return NextResponse.json({ response: `Image generated successfully for model "${modelName}". (Base64 output omitted)` });
+            // Let's just confirm success for now in the text output:
+            return NextResponse.json({
+              response: `Image generated successfully for model "${modelName}". (Base64 output omitted)`,
+            });
 
           // Add more Gemini methods here later
           // case "someOtherMethod":
@@ -122,19 +138,34 @@ export async function POST(req: NextRequest) {
           //   // responseData = await callSomeOtherMethod(modelName, query);
           //   // return NextResponse.json({ response: formatOtherResponse(responseData) });
 
-
           default:
-             console.warn(`Gemini method "${methodName}" not supported in backend.`);
-            return NextResponse.json({ error: `Gemini method "${methodName}" not supported` }, { status: 400 });
+            console.warn(
+              `Gemini method "${methodName}" not supported in backend.`
+            );
+            return NextResponse.json(
+              { error: `Gemini method "${methodName}" not supported` },
+              { status: 400 }
+            );
         }
-
       } catch (error) {
         // Catch any errors thrown by the helper functions or API calls
         console.error(`Error calling Gemini method "${methodName}":`, error);
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        const hasResponse = typeof error === "object" && error !== null && "response" in error && (error as any).response?.data;
-        const apiErrorDetails = hasResponse ? ` Details: ${JSON.stringify((error as any).response.data)}` : '';
-        return NextResponse.json({ error: `Failed to call Gemini API method "${methodName}": ${errorMessage}${apiErrorDetails}` }, { status: 500 });
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        const hasResponse =
+          typeof error === "object" &&
+          error !== null &&
+          "response" in error &&
+          (error as any).response?.data;
+        const apiErrorDetails = hasResponse
+          ? ` Details: ${JSON.stringify((error as any).response.data)}`
+          : "";
+        return NextResponse.json(
+          {
+            error: `Failed to call Gemini API method "${methodName}": ${errorMessage}${apiErrorDetails}`,
+          },
+          { status: 500 }
+        );
       }
 
     // Add more providers here later (e.g., "OpenAI", "Claude")
@@ -145,8 +176,11 @@ export async function POST(req: NextRequest) {
     //   break;
 
     default:
-       console.warn(`Model provider "${provider}" not supported in backend.`);
-      return NextResponse.json({ error: `Model provider "${provider}" not supported` }, { status: 400 });
+      console.warn(`Model provider "${provider}" not supported in backend.`);
+      return NextResponse.json(
+        { error: `Model provider "${provider}" not supported` },
+        { status: 400 }
+      );
   }
 }
 
@@ -155,7 +189,7 @@ export async function GET() {
   console.log("Received GET request for models.");
   try {
     const models = await fetchModelsAndMethods();
-     console.log(`Fetched ${models.length} models successfully.`);
+    console.log(`Fetched ${models.length} models successfully.`);
     return NextResponse.json(models);
   } catch (error) {
     console.error("Error fetching models:", error);

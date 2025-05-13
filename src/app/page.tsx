@@ -5,8 +5,8 @@ import { useState } from "react";
 
 interface SnippetData {
   id: number;
-  model: string; 
-  method: string; 
+  model: string;
+  method: string;
 }
 
 export default function Home() {

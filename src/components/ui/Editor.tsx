@@ -211,7 +211,7 @@ function CodeEditor({ value, onChange }: EditorProps) {
 
             // Find the index of the dot that separates the Model from the potential Method.
             // This is the LAST dot *before* any open parenthesis.
-            
+
             if (lastOpenParenIndex > lastDotIndex) {
               // If a '(' exists after the last dot, the last dot found isn't the method separator.
               // We are inside the arguments, no suggestions here.
