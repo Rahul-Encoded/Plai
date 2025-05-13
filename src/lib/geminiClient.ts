@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-// import { GEMINI_API_KEY } from "./constants";
+import { GEMINI_API_KEY } from "./constants";
 
 export interface ModelInfo {
 	name?: string;
@@ -11,7 +11,7 @@ export interface ModelInfo {
 export function createGeminiClient(): GoogleGenAI{
 	return new GoogleGenAI({
 		vertexai: false,
-		apiKey: process.env.GEMINI_API_KEY
+		apiKey: GEMINI_API_KEY
 	});
 };
 
