@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       // based on the fetched models, but relying on the API call to fail is also an option.
 
       try {
-        let responseData: any; // Use a generic type to hold the response data structure
+        let responseData; 
 
         // --- Route to the specific Gemini method helper ---
         switch (methodName) {
@@ -128,11 +128,12 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: `Gemini method "${methodName}" not supported` }, { status: 400 });
         }
 
-      } catch (error: any) {
+      } catch (error) {
         // Catch any errors thrown by the helper functions or API calls
         console.error(`Error calling Gemini method "${methodName}":`, error);
         const errorMessage = error instanceof Error ? error.message : String(error);
-        const apiErrorDetails = (error as any)?.response?.data ? ` Details: ${JSON.stringify((error as any).response.data)}` : '';
+        const hasResponse = typeof error === "object" && error !== null && "response" in error && (error as any).response?.data;
+        const apiErrorDetails = hasResponse ? ` Details: ${JSON.stringify((error as any).response.data)}` : '';
         return NextResponse.json({ error: `Failed to call Gemini API method "${methodName}": ${errorMessage}${apiErrorDetails}` }, { status: 500 });
       }
 
