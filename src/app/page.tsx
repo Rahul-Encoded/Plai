@@ -1,7 +1,6 @@
 "use client";
 import Sidebar from "@/components/ui/Sidebar";
 import Snippet from "@/components/ui/Snippet";
-import Image from "next/image";
 import { useState } from "react";
 
 interface SnippetData {

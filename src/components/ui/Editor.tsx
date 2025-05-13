@@ -27,7 +27,7 @@ interface EditorProps {
 // from node_modules/monaco-editor/esm/vs/base/worker/workerMain.js etc.
 // to your public/monaco-workers directory.
 if (typeof window !== "undefined") {
-  // @ts-ignore
+  // @ts-expect-error
   self.MonacoEnvironment = {
     getWorkerUrl: function (_moduleId: string, label: string) {
       let workerUrl = "editor.worker.js"; // Default editor worker
@@ -377,7 +377,7 @@ function CodeEditor({ value, onChange }: EditorProps) {
         completionProviderRef.current = null;
       }
     };
-  }, [monacoRef.current, geminiModels, modelProvider]);
+  }, [geminiModels, modelProvider]);
 
   return (
     <div className="h-[200px] border border-primary/35 rounded-md">
