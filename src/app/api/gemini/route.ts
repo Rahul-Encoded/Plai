@@ -1,4 +1,3 @@
-//route.ts
 import { NextRequest, NextResponse } from "next/server";
 // Import the specific helper functions from your geminiClient
 import {
