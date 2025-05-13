@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
           "response" in error &&
           typeof error.response === "object" &&
           error.response !== null &&
-          "data" in (error as any).response;
+          "data" in error.response;
         const apiErrorDetails = hasResponse
           ? ` Details: ${JSON.stringify(
               (error as { response: { data: unknown } }).response.data
