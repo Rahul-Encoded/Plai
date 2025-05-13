@@ -12,19 +12,41 @@ function Sidebar({ onSelect }: SidebarProps) {
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [selectedModel, setSelectedModel] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadModels() {
-      const data = await fetchModelsAndMethods();
-      setModels(data);
+      setIsLoading(true);
+      setError(null);
 
-      if (data.length > 0) {
-        setSelectedModel(data[0].name ?? "");
-        setSelectedMethod(
-          data[0].supportedActions && data[0].supportedActions.length > 0
-            ? data[0].supportedActions[0]
-            : ""
-        );
+      try {
+        const response = await fetch("/api/gemini");
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(
+            errorData.error || `HTTP error! status: ${response.status}`
+          );
+        }
+
+        const data: ModelInfo[] = await response.json();
+
+        setModels(data);
+
+        if (data.length > 0) {
+          setSelectedModel(data[0].name ?? "");
+          setSelectedMethod(
+            data[0].supportedActions && data[0].supportedActions.length > 0
+              ? data[0].supportedActions[0]
+              : ""
+          );
+        }
+      } catch (err) {
+        console.error("Failed to load models:", err);
+        setError("Failed to load models. Please try again.");
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -55,9 +77,10 @@ function Sidebar({ onSelect }: SidebarProps) {
         className="w-full p-2 border rounded"
         value={selectedModel}
         onChange={handleModelChange}
+        disabled={isLoading || error !== null}
       >
         {models.map((model) => (
-          <option key={model.name} value={model.name}>
+          <option key={model.name} value={model.name} className="bg-secondary">
             {model.displayName}
           </option>
         ))}
@@ -68,16 +91,17 @@ function Sidebar({ onSelect }: SidebarProps) {
         className="w-full p-2 border rounded"
         value={selectedMethod}
         onChange={(e) => setSelectedMethod(e.target.value)}
+        disabled={isLoading || error !== null}
       >
         {models
           .find((m) => m.name === selectedModel)
           ?.supportedActions?.map((method) => (
-            <option key={method} value={method}>
+            <option key={method} value={method} className="bg-secondary">
               {method}
             </option>
           ))}
       </select>
-			<Button onClick={handleRun}>Run</Button>
+      <Button onClick={handleRun}>Insert a cell</Button>
     </div>
   );
 }

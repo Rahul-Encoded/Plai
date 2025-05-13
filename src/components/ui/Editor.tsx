@@ -1,31 +1,39 @@
-'use client';
-import Editor from '@monaco-editor/react';
-import { useEffect } from 'react';
+"use client";
 
-interface Props {
-    value: string;
-    onChange: (value: string) => void;
+import { useEffect } from "react";
+import Editor from "@monaco-editor/react";
+import { useTheme } from "next-themes";
+
+interface EditorProps {
+  value: string;
+  onChange: (value: string) => void;
 }
 
-const autocompleteSnippet = `
-# Example:
-Google.GeminiPro.generateText("Explain quantum computing.")
-`;
+function CodeEditor({ value, onChange }: EditorProps) {
+  const { resolvedTheme } = useTheme();
 
-export default function CodeEditor({ value, onChange }: Props) {
-    useEffect(() => {
-        // Optional: Add custom autocomplete provider
-    }, []);
+  const monacoThemeName = resolvedTheme === "dark" ? "vs-dark" : "vs-light";
 
-    return (
-        <div className="h-[400px] border rounded-md overflow-hidden">
-            <Editor
-                height="100%"
-                language="python"
-                theme="vs-dark"
-                value={value || autocompleteSnippet}
-                onChange={(value) => onChange(value || '')}
-            />
-        </div>
-    );
+  useEffect(() => {
+    // Optional: Add custom autocomplete here later
+  }, []);
+
+  return (
+    <div className="h-[200px] border border-primary/35 rounded-md overflow-hidden">
+      <Editor
+        height="100%"
+        language="python"
+        theme={monacoThemeName}
+        value={value}
+        onChange={(newValue) => onChange(newValue || "")}
+        options={{
+          minimap: { enabled: false },
+          fontSize: 14,
+          scrollBeyondLastLine: false,
+        }}
+      />
+    </div>
+  );
 }
+
+export default CodeEditor;
